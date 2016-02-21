@@ -1,0 +1,455 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+
+    <style type="text/css">
+        html, body{
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            overflow: hidden;
+            background: black;
+        }
+        #canvas{
+            width: 100px; /*gets resized*/
+        }
+
+        #left {
+            float: left;
+        }
+        #UI{
+            float: right;
+            background: lightgrey;
+            width: 300px;
+            height: 100%;
+        }
+
+
+        #UI > div {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        #slider-range > div {
+            visibility: hidden;
+        }
+
+        #slider-range {
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWgAAAABCAIAAAB8C6OkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAI4SURBVDhPddL3i85xAMBxP3zfV6fMUK6QrKwjO4SMCGWvkGQdITtkZYYQWZGQPUKIS8iMi7NlhULIyMyut+/zOY8e5F949cr3tXo10yMLYVEsgRlYBsthJayKNbEONsDG2AxbYRtsj52wG/bCvtgfB+MwHIljcAJOxuk4C+fhQlyCy3EVrsUNuBm3427chwcxG4/hKTyLOZgbeQ1v4t3IB/gIn+FLfIMf8DN+57t8lg/yRl7KU3ksD+Wu3JSrckly5KyclKOSLQdln+yWbbJJNsgaWSXLZLEslLkyS6bKZBkvo2WEDJVB0l/6SE/pKh2kvbSRltJUGkl9qS2ZUkUqSjkpLRlSXIpIAUmXNKPIdCyARbA4lsRSWBYrYGXMxFpYDxtiE2weoNtiB+yC3bE39sMBmIXDcRSOxYk4BWfgHJyPi3AprsDVuC5yI27FnZF7cD8ewiN4HE/jObyAl/E63oqh8SE+wef4Kgn9JQH9TT7Je3ktLwL0I7kvt+WGXJFcOS9n5ESAPiwH/oReH6BXBuglRgsC9MwAPSkBHQXoKEsGJqCj39AdA3RraSHNUqBrJKHLBuiSAbqoFExAR/xSLozFUpTLpyjXTVFuje2CcmfskVQeiEOSyuNSlGf/q0xCeQvu4G/lvM6pyveCctz5eZRQfosfo4TyDzQxOoZ+9w/0nTA6hr4YRsfQ8ehjYXQMvVd2pUCvTULHo39DT/sF/d/RedB5o/+CriqVwugyAbpEgI5H55e0n4AkIvzWeEOKAAAAAElFTkSuQmCC);
+            background-position: left;
+            background-size: contain;
+        }
+        #background-slider {
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAABCAIAAAC+O+cgAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAMMSURBVDhPAQED/vwAAAAAAQEBAgICAwMDBAQEBAQEBgYGBgYGBwcHCAgICQkJCgoKCwsLDAwMDQ0NDg4ODw8PEBAQEREREhISExMTFBQUFRUVFhYWFxcXGBgYGRkZGhoaGxsbHBwcHR0dHh4eHx8fICAgISEhIiIiIyMjJCQkJSUlJiYmJycnKCgoKSkpKioqKysrLCwsLS0tLi4uLy8vMDAwMTExMjIyMzMzNDQ0NTU1NjY2Nzc3ODg4OTk5Ojo6Ozs7PDw8PT09Pj4+Pz8/QEBAQUFBQkJCQ0NDRERERUVFRkZGR0dHSEhISUlJSkpKS0tLTExMTU1NTk5OT09PUFBQUVFRUlJSU1NTVFRUVVVVVlZWV1dXWFhYWVlZWlpaW1tbXFxcXV1dXl5eX19fYGBgYWFhYmJiY2NjZGRkZWVlZmZmZ2dnaGhoaWlpampqa2trbGxsbW1tbm5ub29vcHBwcXFxcnJyc3NzdHR0dXV1dnZ2d3d3eHh4eXl5enp6e3t7fHx8fX19fn5+f39/gICAgYGBgoKCg4ODhISEhYWFhoaGh4eHiIiIiYmJioqKi4uLjIyMjY2Njo6Oj4+PkJCQkZGRkpKSk5OTlJSUlZWVlpaWl5eXmJiYmZmZmpqam5ubnJycnZ2dnp6en5+foKCgoaGhoqKio6OjpKSkpaWlpqamp6enqKioqampqqqqq6urrKysra2trq6ur6+vsLCwsbGxsrKys7OztLS0tbW1tra2t7e3uLi4ubm5urq6u7u7vLy8vb29vr6+v7+/wMDAwcHBwsLCw8PDxMTExcXFxsbGx8fHyMjIycnJysrKy8vLzMzMzc3Nzs7Oz8/P0NDQ0dHR0tLS09PT1NTU1dXV1tbW19fX2NjY2dnZ2tra29vb3Nzc3d3d3t7e39/f4ODg4eHh4uLi4+Pj5OTk5eXl5ubm5+fn6Ojo6enp6urq6+vr7Ozs7e3t7u7u7+/v8PDw8fHx8vLy8/Pz9PT09fX19vb29/f3+Pj4+fn5+vr6+/v7/Pz8/f39////TQt7pYsC+BkAAAAASUVORK5CYII=);
+            background-size: contain;
+        }
+    </style>
+
+</head>
+<body>
+<div id="left">
+    <canvas id="canvas"></canvas>
+</div>
+<div id="UI">
+    Color Range
+    <br>
+    <br>
+    Background
+    <div id="background-slider"></div>
+    <br>
+    Lines
+    <div id="slider-range"></div>
+    <br>
+    Saturation: <span id="saturation-value">100</span>%
+    <div id="saturation-slider"></div>
+    <br>
+    Brightness <span id="lighting-value">50</span>%
+    <div id="lighting-slider"></div>
+    <br>
+    Opacity <span id="opacity-value">10</span>%
+    <div id="opacity-slider"></div>
+    <br>
+    Fading Time
+    <div id="fade-slider"></div>
+    <br>
+    Changes visible while running
+    <br>
+    <br>
+    <br>
+    Frizziness
+    <div id="frizziness-slider"></div>
+    <br>
+    Webbiness
+    <div id="webbiness-slider"></div>
+    <br>
+    Changes visible after reset
+    <br>
+    <button id = "reset-button">Reset</button>
+    <button id = "start-button">Pause</button>
+    <!--<button id = "save-image">Save Image</button>-->
+
+</div>
+
+</body>
+
+<script>
+    $(function() {
+        $( "#slider-range" ).slider({
+            range: true,
+            min: 0,
+            max: 360,
+            values: [ p, q ],
+            slide: function( event, ui ) {
+                p = $( "#slider-range" ).slider( "values", 0 );
+                q = $( "#slider-range" ).slider( "values", 1 ) - p;
+            }
+        });
+        $("#background-slider").slider({
+            min: 0,
+            max: 255,
+            values: [backgroundColor],
+            slide: function(event, ui) {
+                backgroundColor = ui.value;
+                document.body.style.backgroundColor = 'rgb('+backgroundColor+','+backgroundColor+','+backgroundColor+')';
+            }
+        });
+        var fadeMap = [0,0.001,0.005,0.01,0.02,0.035,0.06,0.1,0.25,0.9];
+        $("#fade-slider").slider({
+            max: fadeMap.length - 1,
+            values: [1],
+            slide: function(event, ui) {
+                fade = fadeMap[ui.value];
+                //$("#nlVal").text(fadeMap[ui.value]);
+            }
+        });
+        $("#saturation-slider").slider({
+            min: 0,
+            max: 100,
+            values: [saturation],
+            slide: function(event, ui){
+                saturation = ui.value;
+                document.getElementById("saturation-value").innerHTML = [ui.value];
+            }
+        });
+        $("#lighting-slider").slider({
+            min: 0,
+            max: 100,
+            values: [lighting],
+            slide: function(event, ui){
+                lighting = ui.value;
+                document.getElementById("lighting-value").innerHTML = [ui.value];
+            }
+        });
+        $("#opacity-slider").slider({
+            min: 0,
+            max: 100,
+            values: [opacity],
+            slide: function(event, ui){
+                opacity = ui.value;
+                document.getElementById("opacity-value").innerHTML = [ui.value];
+
+            }
+        });
+        var frizzMap = [1.1, 1.5, 2, 5, 10, 25, 50, 100, 200, 300];
+        $("#frizziness-slider").slider({
+            max: frizzMap.length - 1,
+            values: [4],
+            slide: function(event, ui) {
+                noise = frizzMap[ui.value];
+                //$("#nlVal").text(frizzMap[ui.value]);
+            }
+        });
+        var webMap = [1,2,3,4,5,6,7,8,10,100];
+        $("#webbiness-slider").slider({
+            max: webMap.length - 1,
+            values: [3],
+            slide: function(event, ui) {
+                web = webMap[ui.value];
+                //$("#nlVal").text(webMap[ui.value]);
+            }
+        });
+    });
+
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var fade = 0.001;
+    var p = 0;
+    var q = 360;
+    var backgroundColor = 0;
+    var saturation = 100;
+    var lighting = 50;
+    var opacity = 10;
+
+    'floor|ceil|random|round|abs|sqrt|PI|atan2|sin|cos|pow|max|min|hypot'
+            .split('|')
+            .forEach(function(p) { window[p] = Math[p]; });
+
+    var TAU = PI*2; // determines possible directions (PI*2 = 360 degrees) )//TODO: Try other values
+
+    function r(n) { return random()*n; }
+    //function rrng(lo, hi) { return lo + r(hi-lo); }
+    //function rint(lo, hi) { return lo + floor(r(hi - lo + 1)); }
+    //function choose(args) { return args[rint(0, args.length-1)]; }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    var W, H, frame, t0, time, DPR;
+
+    //resize the canvas depending on window size
+    function resize() {
+        var w = innerWidth;
+        var h = innerHeight;
+        DPR = devicePixelRatio || 1;
+
+        canvas.style.width = w-300+'px'; // space for UI
+        canvas.style.height = h+'px';
+
+        W = canvas.width = w * DPR;
+        H = canvas.height = h * DPR;
+    }
+
+    //loop
+    function loop(t) {
+        //console.log(1000/(t-t0)); t0 = t;
+        frame = requestAnimationFrame(loop);
+        draw();
+        time++;
+    }
+
+    // pause on click
+    function pause() {
+        cancelAnimationFrame(frame);
+        if (frame) {
+            frame = null;
+            document.getElementById("start-button").innerHTML="Start";
+        }else{
+            frame = requestAnimationFrame(loop);
+            document.getElementById("start-button").innerHTML="Pause";
+        }
+    }
+    /*function save(){
+        var c=document.getElementById("canvas");
+        var d=c.toDataURL("image/png");
+        var w=window.open('about:blank','image from canvas');
+        w.document.write("<img src='"+d+"' alt='from canvas'/>");
+        window.open(c.toDataURL('image/png'));
+    }*/
+
+    function reset() {
+        cancelAnimationFrame(frame);
+        resize();
+        ctx.clearRect(0, 0, W, H);
+        init();
+        time = 0;
+        frame = requestAnimationFrame(loop);
+        document.getElementById("start-button").innerHTML="Pause";
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    function Vector(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    Vector.add = function(a, b) { return new Vector(a.x + b.x, a.y + b.y); };
+    Vector.sub = function(a, b) { return new Vector(a.x - b.x, a.y - b.y); };
+    Vector.mul = function(a, n) { return new Vector(a.x * n, a.y * n); };
+    Vector.div = function(a, n) { return new Vector(a.x / n, a.y / n); };
+
+    Vector.prototype.clone = function() {
+        return new Vector(this.x, this.y);
+    };
+
+    Vector.prototype.add = function(other) {
+        this.x += other.x;
+        this.y += other.y;
+        return this;
+    };
+
+    Vector.prototype.sub = function(other) {
+        this.x -= other.x;
+        this.y -= other.y;
+        return this;
+    };
+
+    Vector.prototype.mul = function(n) {
+        this.x *= n;
+        this.y *= n;
+        return this;
+    };
+
+    Vector.prototype.div = function(n) {
+        this.x /= n;
+        this.y /= n;
+        return this;
+    };
+
+    Vector.prototype.mag = function() {
+        var x = this.x, y = this.y;
+        return sqrt(x*x + y*y);
+    };
+
+    Vector.prototype.normalize = function() {
+        return this.div(this.mag());
+    };
+
+    Vector.prototype.constrain = function(n) {
+        var m = this.mag();
+        return m > n ? this.mul(n/m) : this;
+    };
+
+    Vector.prototype.zero = function() {
+        this.x = 0;
+        this.y = 0;
+    };
+
+    function vec(x, y) {
+        return new Vector(x, y);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    function clamp(val, lo, hi) {
+        if (val < lo) return lo;
+        if (val > hi) return hi;
+        return val;
+    }
+
+    function FlowField(resolution) {
+        this.resolution = resolution;
+        this.rows = ceil(H / resolution);
+        this.colors = ceil(W / resolution);
+        this.field = new Array(this.colors);
+
+        for (var x = 0; x < this.colors; x++) {
+            this.field[x] = new Array(this.rows);
+            for (var y = 0; y < this.rows; y++) {
+                var t = r(TAU);
+                this.field[x][y] = vec(cos(t), sin(t));
+            }
+        }
+    }
+
+    FlowField.prototype.lookup = function(v) {
+        var y = floor(clamp(v.y/this.resolution, 0, this.rows-1));
+        var x = floor(clamp(v.x/this.resolution, 0, this.colors-1));
+        return this.field[x][y];
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    function Particle(location, velocity, max) {
+        this.location = location;
+        this.velocity = velocity;
+        this.max = max;
+        //this.color = color;
+        this.acc = vec(0, 0);
+    }
+
+    Particle.prototype.applyForce = function(force) {
+        this.acc.add(force);
+    };
+
+    Particle.prototype.follow = function(field) {
+        var force = field.lookup(this.location);
+        var steer = Vector.mul(force, this.max).sub(this.velocity).constrain(0.1);
+        this.applyForce(steer);
+    };
+
+    //
+    Particle.prototype.aim = function(target, maxf) {
+        var goal = Vector.sub(target, this.location);
+        goal.normalize().mul(this.max);
+        var steer = Vector.sub(goal, this.velocity).constrain(maxf);
+        this.applyForce(steer);
+    };
+
+    //
+    Particle.prototype.move = function() {
+        this.velocity.add(this.acc).constrain(this.max);
+        ctx.beginPath();
+
+        ctx.moveTo(this.location.x, this.location.y);
+        this.location.add(this.velocity);
+        ctx.lineTo(this.location.x, this.location.y);
+        ctx.strokeStyle = color(this.location,p,q,saturation+'%',lighting+'%',opacity);
+        ctx.stroke();
+        this.acc.zero();
+    };
+
+    //color depending on position
+    function color(v,p,q,s,l,a) { //TODO: UI p,g,s,l,a
+        var h = floor(q * ((v.x / W) + (v.y / H))/2 + p);
+        return 'hsla('+h+','+s+','+l+','+a/100+')';
+    }
+
+    Particle.prototype.wrap = function() {
+        var x = this.location.x, y = this.location.y;
+        if (x < 0) this.location.x = W;
+        else if (x > W) this.location.x = 0;
+        if (y < 0) this.location.y = H;
+        else if (y > H) this.location.y = 0;
+        return this;
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    var P;
+    var particles;
+    var F;
+    var field;
+    var noise = 10;
+    var web = 4;
+
+    function init() {
+        P = W+H;
+        particles = new Array(P);
+        for (var i = 0; i < W; i++) {
+            particles[i] = new Particle(vec(i, H),
+                    vec(0,0),
+                    DPR*web);
+        }
+        for (var i = 0; i < H; i++) {
+            particles[W+i] = new Particle(vec(W, i),
+                    vec(0,0),
+                    DPR*web);
+        }
+        field = new FlowField(DPR*floor(min(W,H)/noise));
+        ctx.fillStyle = 'rgb('+backgroundColor+','+backgroundColor+','+backgroundColor+')';
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    function draw() {
+        ctx.fillStyle = 'rgba('+backgroundColor+','+backgroundColor+','+backgroundColor+','+fade+')';
+        ctx.fillRect(0, 0, W, H);
+        for (var i = 0; i < P; i++) {
+            var p = particles[i];
+            p.wrap();
+            p.follow(field);
+            p.move();
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById("start-button").onclick = pause;
+    document.getElementById("reset-button").onclick = reset;
+    //document.getElementById("save-image").onclick = save;
+
+
+    reset();
+    //draw();
+</script>
+
+
+</html>
