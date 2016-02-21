@@ -128,7 +128,6 @@
             values: [1],
             slide: function(event, ui) {
                 fade = fadeMap[ui.value];
-                //$("#nlVal").text(fadeMap[ui.value]);
             }
         });
         $("#saturation-slider").slider({
@@ -165,7 +164,6 @@
             values: [4],
             slide: function(event, ui) {
                 noise = frizzMap[ui.value];
-                //$("#nlVal").text(frizzMap[ui.value]);
             }
         });
         var webMap = [1,2,3,4,5,6,7,8,10,100];
@@ -174,7 +172,6 @@
             values: [3],
             slide: function(event, ui) {
                 web = webMap[ui.value];
-                //$("#nlVal").text(webMap[ui.value]);
             }
         });
     });
@@ -193,18 +190,14 @@
             .split('|')
             .forEach(function(p) { window[p] = Math[p]; });
 
-    var TAU = PI*2; // determines possible directions (PI*2 = 360 degrees) )//TODO: Try other values
+    var TAU = PI*2; // determines possible directions (PI*2 = 360 degrees)
 
     function r(n) { return random()*n; }
-    //function rrng(lo, hi) { return lo + r(hi-lo); }
-    //function rint(lo, hi) { return lo + floor(r(hi - lo + 1)); }
-    //function choose(args) { return args[rint(0, args.length-1)]; }
 
     //////////////////////////////////////////////////////////////////////////////////////
 
     var W, H, frame, t0, time, DPR;
 
-    //resize the canvas depending on window size
     function resize() {
         var w = innerWidth;
         var h = innerHeight;
@@ -217,7 +210,6 @@
         H = canvas.height = h * DPR;
     }
 
-    //loop
     function loop(t) {
         //console.log(1000/(t-t0)); t0 = t;
         frame = requestAnimationFrame(loop);
@@ -225,7 +217,6 @@
         time++;
     }
 
-    // pause on click
     function pause() {
         cancelAnimationFrame(frame);
         if (frame) {
@@ -387,7 +378,6 @@
         this.acc.zero();
     };
 
-    //color depending on position
     function color(v,p,q,s,l,a) { //TODO: UI p,g,s,l,a
         var h = floor(q * ((v.x / W) + (v.y / H))/2 + p);
         return 'hsla('+h+','+s+','+l+','+a/100+')';
