@@ -120,6 +120,7 @@
             slide: function(event, ui) {
                 backgroundColor = ui.value;
                 document.body.style.backgroundColor = 'rgb('+backgroundColor+','+backgroundColor+','+backgroundColor+')';
+                console.info(backgroundColor);
             }
         });
         var fadeMap = [0,0.001,0.005,0.01,0.02,0.035,0.06,0.1,0.25,0.9];
@@ -425,8 +426,8 @@
                     DPR*web);
         }
         field = new FlowField(DPR*floor(min(W,H)/noise));
-        ctx.fillStyle = 'rgb('+backgroundColor+','+backgroundColor+','+backgroundColor+')';
-        ctx.fillRect(0, 0, W, H);
+        //ctx.fillStyle = 'rgb('+backgroundColor+','+backgroundColor+','+backgroundColor+')';
+        //ctx.fillRect(0, 0, W, H);
     }
 
     function draw() {
